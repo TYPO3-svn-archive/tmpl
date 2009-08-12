@@ -1,0 +1,6 @@
+
+2009-08-10 Michael Knabe <mk@e-netconsulting.de>
+	* Added some documentation in doc/manual.sxw
+
+2009-08-10 Michael Knabe  <mk@e-netconsulting.de>
+	* initial import, extracted the template engine from solr and community

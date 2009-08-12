@@ -1,0 +1,5 @@
+#Mon Aug 10 14:07:56 CEST 2009
+eclipse.preferences.version=1
+org.eclipse.php.core.contextRoot=
+org.eclipse.php.core.defaultEncoding=
+org.eclipse.php.core.includePath=<?xml version\="1.0" encoding\="UTF-8"?>\n<includepath>\n\t<includepathentry kind\="prj" path\="/TYPO3_4_trunk" resource\="TYPO3_4_trunk" createdReference\="false" contentKind\="source">\n</includepathentry>\n<includepathentry kind\="prj" path\="/EXT\:phpUnit" resource\="EXT\:phpUnit" createdReference\="true" contentKind\="source">\n</includepathentry>\n</includepath>\n

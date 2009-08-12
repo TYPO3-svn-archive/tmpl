@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Insert title here</title>
+</head>
+<body>
+
+<!-- ###TEST_CLEAN_MARKER### begin -->
+Test###TEST###
+<!-- ###TEST_CLEAN_MARKER### end -->
+
+<!-- ###TEST_CLEAN_SUBPART### begin -->
+Subpart<!-- ###SUBPART### begin -->Test###TEST###<!-- ###SUBPART### end -->
+<!-- ###TEST_CLEAN_SUBPART### end -->
+
+<!-- ###TEST_MARKER### begin -->
+###MARKER01### ###MARKER02### ###MARKER03###
+<!-- ###TEST_MARKER### end -->
+
+<!-- ###TEST_VAR### begin -->
+###VAR01.01### ###VAR02.02### ###VAR03.03###
+<!-- ###TEST_VAR### end -->
+
+<!-- ###TEST_SUBPART### begin -->
+<!-- ###SUBPART01### begin -->HiHo HiHo wir sind vergnuegt und froh!<!-- ###SUBPART01### end -->
+<!-- ###TEST_SUBPART### end -->
+
+<!-- ###TEST_VIEWHELPER_WITH_DATEFORMAT### begin -->
+###DATE: 1249924133 | d.m.Y \u\m H:i:s###
+<!-- ###TEST_VIEWHELPER_WITH_DATEFORMAT### end -->
+
+<!-- ###TEST_VIEWHELPER_WITH_MARKER_AND_TS### begin -->
+###DATE: ###TIMESTAMP### | ###TS:plugin.tx_tmpl.tests.dateFormat.date### ###
+<!-- ###TEST_VIEWHELPER_WITH_MARKER_AND_TS### end -->
+
+<!-- ###TEST_LOOP###  -->
+<table><tr><th>Product</tr><th>Price</tr><th>Unit</tr></tr><!-- ###LOOP:PRODUCTS### begin --><!-- ###LOOP_CONTENT### begin--><tr><td>###PRODUCT.TITLE###</td><td>###PRODUCT.PRICE###</td><td>###PRODUCT.UNIT###</td></tr><!-- ###LOOP_CONTENT### end --><!-- ###LOOP:PRODUCTS### end --></table>
+<!-- ###TEST_LOOP###  -->
+</body>
+</html>
