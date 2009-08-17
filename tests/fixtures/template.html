@@ -24,7 +24,7 @@ Subpart<!-- ###SUBPART### begin -->Test###TEST###<!-- ###SUBPART### end -->
 <!-- ###TEST_VAR### end -->
 
 <!-- ###TEST_SUBPART### begin -->
-<!-- ###SUBPART01### begin -->HiHo HiHo wir sind vergnuegt und froh!<!-- ###SUBPART01### end -->
+Ein<!-- ###SUBPART01### begin -->fach Irre, diese<!-- ###SUBPART01### end -->Briten!
 <!-- ###TEST_SUBPART### end -->
 
 <!-- ###TEST_VIEWHELPER_WITH_DATEFORMAT### begin -->
@@ -38,5 +38,28 @@ Subpart<!-- ###SUBPART### begin -->Test###TEST###<!-- ###SUBPART### end -->
 <!-- ###TEST_LOOP###  -->
 <table><tr><th>Product</tr><th>Price</tr><th>Unit</tr></tr><!-- ###LOOP:PRODUCTS### begin --><!-- ###LOOP_CONTENT### begin--><tr><td>###PRODUCT.TITLE###</td><td>###PRODUCT.PRICE###</td><td>###PRODUCT.UNIT###</td></tr><!-- ###LOOP_CONTENT### end --><!-- ###LOOP:PRODUCTS### end --></table>
 <!-- ###TEST_LOOP###  -->
+
+<!-- ###TEST_COMPLEX### -->
+	###NL2BR:Hello World 
+	###TEST###, you are on the Page ###PAGE.TITLE###
+	And we are in the extension ###P_OBJ.EXT_KEY######
+	<table>
+		<!-- ###HEADER### -->
+			<tr>
+				<th>This</tr>
+				<th>That</tr>
+				<th>There</tr>
+			</tr>
+		<!-- ###HEADER### -->
+		<!-- ###LOOP:PRODUCTS### begin -->
+		<!-- ###LOOP_CONTENT### -->
+			<tr>
+				<td>###PRODUCT.TITLE###</td>
+				<td>###PRODUCT.PRICE###</td>
+				<td>###POBJ.UNIT###</td>
+			</tr>
+		<!-- ###LOOP_CONTENT### -->
+		<!-- ###LOOP:PRODUCTS### end -->
+<!-- ###TEST_COMPLEX### -->
 </body>
 </html>

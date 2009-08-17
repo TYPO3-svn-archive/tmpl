@@ -138,7 +138,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 	}
 
 	/**
-	 * Tests variable substitution
+	 * Tests Subpart substitution
 	 */
 	public function testSubpartSubstitution() {
 		$this->simulateFrontendEnviroment();
@@ -150,7 +150,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		// add markers seperatly
 		$this->loadTemplate($tmpl_engine, 'EXT:tmpl/tests/fixtures/template.html', 'test_subpart');
 
-		$tmpl_engine->addSubpart('subpart01', 'Ein Hoch auf die Briten!');
+		$tmpl_engine->addSubpart('subpart01', ' Hoch auf die ');
 
 		$this->assertEquals('Ein Hoch auf die Briten!', trim($tmpl_engine->render()));
 	}

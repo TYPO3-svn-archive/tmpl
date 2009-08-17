@@ -1,3 +1,8 @@
+2009-08-14 Christoph Niewerth <christoph.niewerth@e-netconsulting.de>
+	* Added Link and GetCObj Viewhelper from Community
+
+2009-08-13 Michael Knabe <mk@e-netconsulting.de>
+	* Changed the substitute subpart test, so that it also depends on the text sourrounding the subpart
 
 2009-08-10 Michael Knabe <mk@e-netconsulting.de>
 	* Added some documentation in doc/manual.sxw
