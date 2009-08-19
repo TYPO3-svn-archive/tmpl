@@ -178,7 +178,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 	 */
 	public function testViewhelperSubstitutionWithMarkerAndTs() {
 		$this->simulateFrontendEnviroment();
-		$GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_tmpl.']['general.']['dateFormat.']['date'] = 'd.m.Y \u\m H:i:s';
+		$GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_tmpl.']['tests.']['dateFormat.']['date'] = 'd.m.Y \u\m H:i:s';
 
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
 		$templateClass = t3lib_div::makeInstanceClassName('tx_Tmpl');
