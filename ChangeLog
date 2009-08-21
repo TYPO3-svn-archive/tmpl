@@ -1,3 +1,14 @@
+2009-08-21 Michael Knabe <mk@e-netconsulting.de>
+	* Fixed a wrong written variable name, that prevented variable substitution from working
+	* Fixed some typos in the manual.sxw and removed the part that told that nested viewhelpers don't work
+
+2009-08-21 Christoph Niewerth <christoph.niewerth@e-netconsulting.de>
+	* Fixed loadHtmlFile to work without cObj and changed restrictive __construct to allow cObj == null to load template without cobj
+
+2009-08-19 Christoph Niewerth <christoph.niewerth@e-netconsulting.de>
+	* Added includePath of tmpl viewhelpers for autoloading
+	* Added different parsing to handle nested viewhelpers
+
 2009-08-14 Christoph Niewerth <christoph.niewerth@e-netconsulting.de>
 	* Added Link and GetCObj Viewhelper from Community
 

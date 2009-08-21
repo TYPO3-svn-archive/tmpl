@@ -58,12 +58,14 @@ class tx_Tmpl {
 	 * @param	string	path to the template file
 	 * @param	string	name of the subpart to work on
 	 */
-	public function __construct(tslib_cObj $contentObject, $templateFile, $subpart) {
+	public function __construct($contentObject, $templateFile, $subpart) {
 		$this->cObj = $contentObject;
 		$this->templateFile = $templateFile;
 
 		$this->loadHtmlFile($templateFile);
 		$this->workOnSubpart($subpart);
+		// add include path for tmpl viewhelpers (autoload)
+		$this->addViewHelperIncludePath('tmpl','classes/viewhelper/');
 	}
 
 	public function __destruct() {
@@ -77,7 +79,14 @@ class tx_Tmpl {
 	 * @param	string	path to html template file
 	 */
 	public function loadHtmlFile($htmlFile) {
-		$this->template = $this->cObj->fileResource($htmlFile);
+		if( isset($this->cObj) ) {
+			$this->template = $this->cObj->fileResource($htmlFile);
+		} else {
+			$fileName = t3lib_div::getFileAbsFileName($htmlFile);
+			if (file_exists($fileName)) {
+				$this->template = file_get_contents($fileName);
+			}
+		}
 	}
 
 	/**
@@ -231,7 +240,9 @@ class tx_Tmpl {
 		}
 
 			// process view helpers, they need to be the last objects processing the template
-		$this->workOnSubpart = $this->processViewHelpers($this->workOnSubpart);
+		//$this->workOnSubpart = $this->processViewHelpers($this->workOnSubpart);
+			// uncomment line above + comment line beneath to get old viewhelper functionality (fallback)
+		$this->parseViewHelpers($this->workOnSubpart);
 
 			// finally, do a cleanup if not disable
 		if ($cleanTemplate) {
@@ -323,6 +334,140 @@ class tx_Tmpl {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Helper function to determine of correct end was found, execute viewhelper and adjust content + positions
+	 * @param array $viewHelper ViewHelperArray with information about parsing
+	 * @param int &$viewHelperCurrent Current Position within ViewHelperArray
+	 * @param int &$parameterStart StartPosition for parameter parsing
+	 * @param int &$pos Current Position within content
+	 * @param string &$content Content working on
+	 * @param int &$contentLength length of content
+	 * @return none
+	 */
+	protected function executeViewHelper(&$viewHelper, &$viewHelperCurrent, &$pos, &$content, &$contentLength) {
+		//from dummy to current
+		$viewHelperCurrent--;
+
+		// part before ### is 'text', parse ### again for functionality
+		if ( $viewHelper[$viewHelperCurrent]['name'] === '' ) {
+			$pos = $pos-4;
+			$viewHelperCurrent--;
+			debug($viewHelperCurrent);
+			//jump out of function
+			return;
+		}
+
+		$viewHelperName = strtolower($viewHelper[$viewHelperCurrent]['name']);
+
+		if (!isset($this->helpers[$viewHelperName])) {
+			if(!$this->loadViewHelper($viewHelperName)) {
+				return;
+			}
+			$this->addViewHelper($viewHelperName);
+		}
+
+		$viewHelperClass = $this->helpers[strtolower($viewHelperName)];
+		$parameter = substr($content, $viewHelper[$viewHelperCurrent]['parameterStart'], $viewHelper[$viewHelperCurrent]['end']-$viewHelper[$viewHelperCurrent]['parameterStart']-2);
+		$replacement = $viewHelperClass->execute(explode('|', $parameter));
+		$content = substr_replace($content, $replacement, $viewHelper[$viewHelperCurrent]['start'], $viewHelper[$viewHelperCurrent]['end'] - $viewHelper[$viewHelperCurrent]['start']+1);
+		//$content = t3lib_parsehtml::substituteMarker(
+		//	$content,
+		//	'###' . $viewHelper[$viewHelperCurrent]['name'] . ':' . $parameter . '###',
+		//	$replacement
+		//);
+
+		//adjust positions and content length to parse added Text
+		$newContentLength = strlen($content);
+		$pos = $viewHelper[$viewHelperCurrent]['end'] - $contentLength + $newContentLength;
+		$contentLength = $newContentLength;
+
+		//from current to parent
+		$viewHelperCurrent--;
+	}
+
+	/**
+	 * parse view helper, all default markers, variables, loops and subparts should be processed
+	 * only ### from ViewHelpers should be within content.
+	 * Meaning of ### can only be determind by its following content
+	 *
+	 * @param	string	reference of content to process by viewhelpers
+	 * @author	Christoph Niewerth <christoph.niewerth@e-netconsulting.org>
+	 */
+	public function parseViewHelpers(&$content) {
+		$contentLength = strlen($content);
+		$rauteCount = 0;
+		$rauteFound = true;
+		$viewHelper = array();
+		$parameterStart = 0;
+
+		// use viewHelperCurrent to determine if we are within viewHelper parsing
+		// viewHelperCurrent = 0 is equal to false for if-statements
+		$viewHelperCurrent = 0;
+
+		//begin parsing to get markers and find nested viewhelpers
+		$pos=0;
+		while($pos<$contentLength) {
+			switch(substr($content,$pos,1)) {
+				case '#':
+					$rauteCount++;
+					// found possible end of Viewhelper
+					if ($viewHelperCurrent && $rauteFound) {
+						$this->executeViewHelper($viewHelper, $viewHelperCurrent, $pos, $content, $contentLength);
+						$rauteFound = false;
+					// Found end or begin Viewhelper
+					} else if ($rauteCount == 3) {
+						// if end store position
+						$viewHelper[$viewHelperCurrent]['end'] = $pos;
+						$viewHelperCurrent++;
+						// if fist store position of first #
+						$viewHelper[$viewHelperCurrent] = array();
+						$viewHelper[$viewHelperCurrent]['start'] = $pos-2;
+						$rauteFound = true;
+						$rauteCount = 0;
+					}
+					break;
+				case ':':
+					// found viewhelper name
+					if ($viewHelperCurrent && $rauteFound) {
+						$viewHelper[$viewHelperCurrent]['name'] = substr($content,$viewHelper[$viewHelperCurrent]['start']+3, $pos-$viewHelper[$viewHelperCurrent]['start']-3);
+						$viewHelper[$viewHelperCurrent]['parameterStart'] = $pos + 1;
+						$rauteFound = false;
+						$rauteCount = 0;
+					}
+					break;
+				case ' ':
+				case '.':
+					// found possible end of Viewhelper
+					if ( $viewHelperCurrent && $rauteFound) {
+						$this->executeViewHelper($viewHelper, $viewHelperCurrent, $pos, $content, $contentLength);
+						$rauteFound = false;
+					}
+					//reset $rauteCount to detect ###
+					if($rauteCount != 0) {
+						$rauteCount = 0;
+						$rauteFound = false;
+					}
+					break;
+				default:
+					//reset $rauteCount to detect ###
+					if($rauteCount != 0) {
+						$rauteCount = 0;
+						$rauteFound = false;
+					}
+				break;
+			}
+			$pos++;
+		}
+		// handling of last ###
+		if ($viewHelperCurrent && $rauteFound) {
+			//adjust pos (pos++ at end of while)
+			$pos--;
+
+			$this->executeViewHelper($viewHelper, $viewHelperCurrent, $pos, $content, $contentLength);
+			$rauteFound = false;
+		}
 	}
 
 	/**
@@ -442,7 +587,7 @@ class tx_Tmpl {
 						$resolveMethod = 'get' . self::camelize($valueSelector);
 						$resolvedValue = $variableValue->$resolveMethod();
 					} else if(method_exists($variableValue, 'get')) {
-						$resoledValue = $variableValue->get($valueSelector);
+						$resolvedValue = $variableValue->get($valueSelector);
 					} else {
 						throw t3lib_div::makeInstance('tx_tmpl_NoGetterException');
 					}

@@ -42,7 +42,9 @@ class tx_tmpl_viewhelper_Crop implements tx_tmpl_ViewHelper {
 	 */
 	public function __construct(array $arguments = array()) {
 		$this->maxLength = $arguments['maxLength'];
-		$this->cropIndicator = $arguments['cropIndicator'];
+		if(array_key_exists('cropIndicator', $arguments)) {
+			$this->cropIndicator = $arguments['cropIndicator'];
+		}
 	}
 
 	/**
@@ -63,7 +65,7 @@ class tx_tmpl_viewhelper_Crop implements tx_tmpl_ViewHelper {
 		$cropIndicator = $this->cropIndicator;
 		if (isset($arguments[2])) {
 			$cropIndicator = $arguments[2];
-		}
+		} 
 
 		$croppedString = t3lib_div::fixed_lgd_cs($stringToCrop, $maxLength, $cropIndicator);
 
