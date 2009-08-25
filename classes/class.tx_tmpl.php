@@ -685,10 +685,21 @@ class tx_Tmpl {
 		$key = strtolower($key);
 
 		if (array_key_exists($key, $this->variables)) {
-				// TODO throw an exception
+				throw new Exception('Can\'t reasign variables. Use delVariable first if you really want to do so.', 1251212587);
 		} else {
 			$this->variables[$key] = $value;
 		}
+	}
+	
+	/**
+	 * Unsets a variable from the HTML template. Use this if you want to redefine a variable.
+	 * @param	string	$key	variable key
+	 * @return	mixed	The old variable value
+	 */
+	public function delVariable($key) {
+		$result = $this->variables[$key];
+		unset($this->variables[$key]);
+		return $result;
 	}
 
 	/**

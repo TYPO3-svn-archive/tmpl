@@ -66,13 +66,19 @@ class tx_tmpl_viewhelper_Link implements tx_tmpl_ViewHelper {
 
 			$additionalParameters = $unprocessedParameters;
 		}
+		
+		//added by matthias - new default: cache urls, can be disabled by 5th parameter
+		if (!isset($arguments[4]))
+			$arguments[4] = true;
 
 		$link = $this->contentObject->typoLink(
 			$arguments[0],
 			array(
 				'parameter' => $arguments[1],
 				'additionalParams' => $additionalParameters,
-				'ATagParams' => $arguments[3]
+				'ATagParams' => $arguments[3],
+				//added by matthias: cache-handling for url (cHash)
+				'useCacheHash' => $arguments[4],
 			)
 		);
 		return $link;
