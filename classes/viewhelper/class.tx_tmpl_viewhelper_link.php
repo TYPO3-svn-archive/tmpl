@@ -66,8 +66,8 @@ class tx_tmpl_viewhelper_Link implements tx_tmpl_ViewHelper {
 
 			$additionalParameters = $unprocessedParameters;
 		}
-		
-		//added by matthias - new default: cache urls, can be disabled by 5th parameter
+
+			//added by matthias - new default: cache urls, can be disabled by 5th parameter
 		if (!isset($arguments[4]))
 			$arguments[4] = true;
 

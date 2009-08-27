@@ -70,11 +70,11 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
 		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
-		//filesize in tslib_content->fileResource did not find file
+			//filesize in tslib_content->fileResource did not find file
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_clean_marker');
 
 		$this->loadTemplate($tmpl_engine, 'EXT:tmpl/tests/fixtures/template.html', 'test_clean_marker');
-		//Cleaning will be invoked at end of rendering
+			//Cleaning will be invoked at end of rendering
 		$this->assertEquals('Test', trim($tmpl_engine->render()));
 
 		$this->loadTemplate($tmpl_engine, 'EXT:tmpl/tests/fixtures/template.html', 'test_clean_subpart');
@@ -91,7 +91,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_clean_marker');
 
-		// add markers seperatly
+			// add markers seperatly
 		$this->loadTemplate($tmpl_engine, 'EXT:tmpl/tests/fixtures/template.html', 'test_marker');
 
 		$tmpl_engine->addMarker('marker01', '01');
@@ -102,7 +102,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 
 		unset($tmpl_engine);
 
-		// add markers as array
+			// add markers as array
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_clean_marker');
 		$this->loadTemplate($tmpl_engine, 'EXT:tmpl/tests/fixtures/template.html', 'test_marker');
 
@@ -127,7 +127,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_clean_marker');
 
-		// add markers seperatly
+			// add markers seperatly
 		$this->loadTemplate($tmpl_engine, 'EXT:tmpl/tests/fixtures/template.html', 'test_var');
 
 		$tmpl_engine->addVariable('var01', array('01' => '01'));
@@ -147,7 +147,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_subpart');
 
-		// add markers seperatly
+			// add markers seperatly
 		$this->loadTemplate($tmpl_engine, 'EXT:tmpl/tests/fixtures/template.html', 'test_subpart');
 
 		$tmpl_engine->addSubpart('subpart01', ' Hoch auf die ');

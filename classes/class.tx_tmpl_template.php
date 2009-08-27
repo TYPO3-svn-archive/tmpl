@@ -64,7 +64,7 @@ class tx_tmpl_Template {
 
 		$this->loadHtmlFile($templateFile);
 		$this->workOnSubpart($subpart);
-		// add include path for tmpl viewhelpers (autoload)
+			// add include path for tmpl viewhelpers (autoload)
 		$this->addViewHelperIncludePath('tmpl','classes/viewhelper/');
 	}
 
@@ -347,10 +347,10 @@ class tx_tmpl_Template {
 	 * @return none
 	 */
 	protected function executeViewHelper(&$viewHelper, &$viewHelperCurrent, &$pos, &$content, &$contentLength) {
-		//from dummy to current
+			//from dummy to current
 		$viewHelperCurrent--;
 
-		// part before ### is 'text', parse ### again for functionality
+			// part before ### is 'text', parse ### again for functionality
 		if ( $viewHelper[$viewHelperCurrent]['name'] === '' ) {
 			$pos = $pos-4;
 			$viewHelperCurrent--;
@@ -372,18 +372,13 @@ class tx_tmpl_Template {
 		$parameter = substr($content, $viewHelper[$viewHelperCurrent]['parameterStart'], $viewHelper[$viewHelperCurrent]['end']-$viewHelper[$viewHelperCurrent]['parameterStart']-2);
 		$replacement = $viewHelperClass->execute(explode('|', $parameter));
 		$content = substr_replace($content, $replacement, $viewHelper[$viewHelperCurrent]['start'], $viewHelper[$viewHelperCurrent]['end'] - $viewHelper[$viewHelperCurrent]['start']+1);
-		//$content = t3lib_parsehtml::substituteMarker(
-		//	$content,
-		//	'###' . $viewHelper[$viewHelperCurrent]['name'] . ':' . $parameter . '###',
-		//	$replacement
-		//);
 
-		//adjust positions and content length to parse added Text
+			//adjust positions and content length to parse added Text
 		$newContentLength = strlen($content);
 		$pos = $viewHelper[$viewHelperCurrent]['end'] - $contentLength + $newContentLength;
 		$contentLength = $newContentLength;
 
-		//from current to parent
+			//from current to parent
 		$viewHelperCurrent--;
 	}
 
@@ -402,26 +397,26 @@ class tx_tmpl_Template {
 		$viewHelper = array();
 		$parameterStart = 0;
 
-		// use viewHelperCurrent to determine if we are within viewHelper parsing
-		// viewHelperCurrent = 0 is equal to false for if-statements
+			// use viewHelperCurrent to determine if we are within viewHelper parsing
+			// viewHelperCurrent = 0 is equal to false for if-statements
 		$viewHelperCurrent = 0;
 
-		//begin parsing to get markers and find nested viewhelpers
+			//begin parsing to get markers and find nested viewhelpers
 		$pos=0;
 		while($pos<$contentLength) {
 			switch(substr($content,$pos,1)) {
 				case '#':
 					$rauteCount++;
-					// found possible end of Viewhelper
+						// found possible end of Viewhelper
 					if ($viewHelperCurrent && $rauteFound) {
 						$this->executeViewHelper($viewHelper, $viewHelperCurrent, $pos, $content, $contentLength);
 						$rauteFound = false;
-					// Found end or begin Viewhelper
+						// Found end or begin Viewhelper
 					} else if ($rauteCount == 3) {
 						// if end store position
 						$viewHelper[$viewHelperCurrent]['end'] = $pos;
 						$viewHelperCurrent++;
-						// if fist store position of first #
+							// if fist store position of first #
 						$viewHelper[$viewHelperCurrent] = array();
 						$viewHelper[$viewHelperCurrent]['start'] = $pos-2;
 						$rauteFound = true;
@@ -429,7 +424,7 @@ class tx_tmpl_Template {
 					}
 					break;
 				case ':':
-					// found viewhelper name
+						// found viewhelper name
 					if ($viewHelperCurrent && $rauteFound) {
 						$viewHelper[$viewHelperCurrent]['name'] = substr($content,$viewHelper[$viewHelperCurrent]['start']+3, $pos-$viewHelper[$viewHelperCurrent]['start']-3);
 						$viewHelper[$viewHelperCurrent]['parameterStart'] = $pos + 1;
@@ -439,19 +434,19 @@ class tx_tmpl_Template {
 					break;
 				case ' ':
 				case '.':
-					// found possible end of Viewhelper
+						// found possible end of Viewhelper
 					if ( $viewHelperCurrent && $rauteFound) {
 						$this->executeViewHelper($viewHelper, $viewHelperCurrent, $pos, $content, $contentLength);
 						$rauteFound = false;
 					}
-					//reset $rauteCount to detect ###
+						//reset $rauteCount to detect ###
 					if($rauteCount != 0) {
 						$rauteCount = 0;
 						$rauteFound = false;
 					}
 					break;
 				default:
-					//reset $rauteCount to detect ###
+						//reset $rauteCount to detect ###
 					if($rauteCount != 0) {
 						$rauteCount = 0;
 						$rauteFound = false;
@@ -460,9 +455,9 @@ class tx_tmpl_Template {
 			}
 			$pos++;
 		}
-		// handling of last ###
+			// handling of last ###
 		if ($viewHelperCurrent && $rauteFound) {
-			//adjust pos (pos++ at end of while)
+				//adjust pos (pos++ at end of while)
 			$pos--;
 
 			$this->executeViewHelper($viewHelper, $viewHelperCurrent, $pos, $content, $contentLength);
