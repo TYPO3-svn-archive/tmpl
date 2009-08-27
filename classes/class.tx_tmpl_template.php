@@ -34,7 +34,7 @@ require_once $GLOBALS['PATH_tmpl'] . 'interfaces/interface.tx_tmpl_viewhelper.ph
  * @package TYPO3
  * @subpackage tmpl
  */
-class tx_Tmpl {
+class tx_tmpl_Template {
 
 	protected $prefix;
 	protected $cObj;
@@ -690,7 +690,7 @@ class tx_Tmpl {
 			$this->variables[$key] = $value;
 		}
 	}
-	
+
 	/**
 	 * Unsets a variable from the HTML template. Use this if you want to redefine a variable.
 	 * @param	string	$key	variable key

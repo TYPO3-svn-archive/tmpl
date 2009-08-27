@@ -1,6 +1,6 @@
 <?php
 
-require_once t3lib_extMgm::extPath('tmpl').'classes/class.tx_tmpl.php';
+require_once t3lib_extMgm::extPath('tmpl').'classes/class.tx_tmpl_template.php';
 require_once t3lib_extMgm::extPath('tmpl').'classes/viewhelper/class.tx_tmpl_viewhelper_date.php';
 require_once t3lib_extMgm::extPath('cms').'tslib/class.tslib_content.php';
 /**
@@ -15,17 +15,17 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 	protected function setUp() {
 		parent::setUp ();
 
-		$this->className = t3lib_div::makeInstanceClassName('tx_Tmpl');
+		$this->className = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 	}
 
 	/**
 	 * Workaround to load templateFile
 	 * Problems with filesize through working direcory and manual set of $GLOBALS['TSFE']->tmpl->getFileName_backPath = PATH_site
-	 * @param tx_Tmpl $templateEngine
+	 * @param tx_tmpl_Template $templateEngine
 	 * @param string $templateFile
 	 * @param string $subpart
 	 */
-	protected function loadTemplate(tx_Tmpl &$templateEngine, $templateFile, $subpart) {
+	protected function loadTemplate(tx_tmpl_Template &$templateEngine, $templateFile, $subpart) {
 		$fileName = t3lib_div::getFileAbsFileName($templateFile);
 		if (file_exists($fileName)) {
 			$templateEngine->setWorkingTemplateContent(file_get_contents($fileName));
@@ -40,7 +40,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$this->simulateFrontendEnviroment();
 
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
-		$templateClass = t3lib_div::makeInstanceClassName('tx_Tmpl');
+		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template01.html', 'test_clean_marker');
 
 		$tmpl_engine->addViewHelperIncludePath('tmpl','classes/viewhelper/');
@@ -55,7 +55,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$this->simulateFrontendEnviroment();
 
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
-		$templateClass = t3lib_div::makeInstanceClassName('tx_Tmpl');
+		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_clean_marker');
 		$viewHelperDate = new tx_tmpl_viewhelper_Date();
 
@@ -69,7 +69,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$this->simulateFrontendEnviroment();
 
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
-		$templateClass = t3lib_div::makeInstanceClassName('tx_Tmpl');
+		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		//filesize in tslib_content->fileResource did not find file
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_clean_marker');
 
@@ -88,7 +88,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$this->simulateFrontendEnviroment();
 
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
-		$templateClass = t3lib_div::makeInstanceClassName('tx_Tmpl');
+		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_clean_marker');
 
 		// add markers seperatly
@@ -124,7 +124,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$this->simulateFrontendEnviroment();
 
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
-		$templateClass = t3lib_div::makeInstanceClassName('tx_Tmpl');
+		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_clean_marker');
 
 		// add markers seperatly
@@ -144,7 +144,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$this->simulateFrontendEnviroment();
 
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
-		$templateClass = t3lib_div::makeInstanceClassName('tx_Tmpl');
+		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_subpart');
 
 		// add markers seperatly
@@ -162,7 +162,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$this->simulateFrontendEnviroment();
 
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
-		$templateClass = t3lib_div::makeInstanceClassName('tx_Tmpl');
+		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_viewhelper');
 
 		$this->loadTemplate($tmpl_engine, 'EXT:tmpl/tests/fixtures/template.html', 'TEST_VIEWHELPER_WITH_DATEFORMAT');
@@ -181,7 +181,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_tmpl.']['tests.']['dateFormat.']['date'] = 'd.m.Y \u\m H:i:s';
 
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
-		$templateClass = t3lib_div::makeInstanceClassName('tx_Tmpl');
+		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_viewhelper');
 
 		$this->loadTemplate($tmpl_engine, 'EXT:tmpl/tests/fixtures/template.html', 'TEST_VIEWHELPER_WITH_MARKER_AND_TS');
@@ -204,7 +204,7 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 		$this->simulateFrontendEnviroment();
 
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
-		$templateClass = t3lib_div::makeInstanceClassName('tx_Tmpl');
+		$templateClass = t3lib_div::makeInstanceClassName('tx_tmpl_Template');
 		$tmpl_engine = new $templateClass($cObj, 'EXT:tmpl/tests/fixtures/template.html', 'test_loop');
 
 		$this->loadTemplate($tmpl_engine, 'EXT:tmpl/tests/fixtures/template.html', 'TEST_LOOP');
@@ -229,12 +229,12 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 	public function testUnderScoredToUpperCamelCase() {
 		$this->assertEquals(
 			'IchBinEinVerdammtKomplizierterSatz',
-			tx_Tmpl::underscoredToUpperCamelCase('Ich_Bin_Ein_Verdammt_Komplizierter_Satz'),
+			tx_tmpl_Template::underscoredToUpperCamelCase('Ich_Bin_Ein_Verdammt_Komplizierter_Satz'),
 			'Could not camelize word with underscores'
 		);
 		$this->assertEquals(
 			'IchBinEinVerdammtKomplizierterSatz',
-			tx_Tmpl::underscoredToUpperCamelCase('ich_bin_Ein_verdammt_Komplizierter_satz'),
+			tx_tmpl_Template::underscoredToUpperCamelCase('ich_bin_Ein_verdammt_Komplizierter_satz'),
 			'Could not camelize word with underscores und different beginnings'
 		);
 	}
@@ -245,12 +245,12 @@ class tx_tmpl_testcase extends tx_phpunit_testcase {
 	public function testCamelizeUnderScoreReplace() {
 		$this->assertEquals(
 			'IchBinEinVerdammtKomplizierterSatz',
-			tx_Tmpl::camelize('Ich_Bin_Ein_Verdammt_Komplizierter_Satz'),
+			tx_tmpl_Template::camelize('Ich_Bin_Ein_Verdammt_Komplizierter_Satz'),
 			'Could not camelize word with underscores'
 		);
 		$this->assertEquals(
 			'IchBinEinVerdammtKomplizierterSatz',
-			tx_Tmpl::camelize('ich_bin_Ein_verdammt_Komplizierter_satz'),
+			tx_tmpl_Template::camelize('ich_bin_Ein_verdammt_Komplizierter_satz'),
 			'Could not camelize word with underscores und different beginnings'
 		);
 	}
