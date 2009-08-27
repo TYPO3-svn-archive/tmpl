@@ -691,7 +691,7 @@ class tx_tmpl_Template {
 	 * @param	string	$key	variable key
 	 * @return	mixed	The old variable value
 	 */
-	public function delVariable($key) {
+	public function deleteVariable($key) {
 		$result = $this->variables[$key];
 		unset($this->variables[$key]);
 		return $result;
