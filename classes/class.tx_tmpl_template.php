@@ -73,10 +73,11 @@ class tx_tmpl_Template {
 	}
 
 	/**
-	 * Loads the content of a html template file. Resolves paths beginning with
+	 * Loads content of a html template file. Resolves paths beginning with
 	 * "EXT:".
 	 *
 	 * @param	string	path to html template file
+	 * @return	void
 	 */
 	public function loadHtmlFile($htmlFile) {
 		if( isset($this->cObj) ) {
@@ -90,10 +91,10 @@ class tx_tmpl_Template {
 	}
 
 	/**
-	 * Sets the content for the template we're working on
+	 * Sets content for template we're working on.
 	 *
-	 * @param	string	the template's content - usually HTML
-	 * @return unknown_type
+	 * @param	string	template's content - usually HTML
+	 * @return	void
 	 */
 	public function setWorkingTemplateContent($templateContent) {
 		$this->workOnSubpart = $templateContent;
@@ -105,16 +106,18 @@ class tx_tmpl_Template {
 	 *
 	 * @param	string	Extension key
 	 * @param	string	Path inside the extension to look for view helpers
+	 * @return	void
 	 */
 	public function addViewHelperIncludePath($extensionKey, $viewHelperPath) {
 		$this->viewHelperIncludePath[$extensionKey] = $viewHelperPath;
 	}
 
 	/**
-	 * adds a view helper
+	 * Adds a viewhelper.
 	 *
 	 * @param	string	view helper name
 	 * @param	array	optional array of arguments
+	 * @return	boolean	true if view helper was loaded otherwise false
 	 */
 	public function addViewHelper($helperName, array $arguments = array()) {
 		$success = false;
@@ -141,6 +144,12 @@ class tx_tmpl_Template {
 		return $success;
 	}
 
+	/**
+	 * Loads view helper according to helperKey.
+	 *
+	 * @param	string	$helperKey	name of view helper
+	 * @return	mixed	classname of view helper if loaded otherwise false
+	 */
 	protected function loadViewHelper($helperKey) {
 		if (isset($this->loadedHelperFiles[strtolower($helperKey)])) {
 			return $this->loadedHelperFiles[strtolower($helperKey)]['class'];
@@ -179,11 +188,11 @@ class tx_tmpl_Template {
 	}
 
 	/**
-	 * adds an already instantiated viewhelper
+	 * Adds an already instantiated view helper.
 	 *
-	 * @param $helperName
-	 * @param $helperObject
-	 * @return unknown_type
+	 * @param	string	name of view helper
+	 * @param	tx_tmpl_ViewHelper	view helper object
+	 * @return	boolean	true if operation was successful otherwise false
 	 */
 	public function addViewHelperObject($helperName, tx_tmpl_ViewHelper $helperObject) {
 		$success = false;
@@ -199,9 +208,9 @@ class tx_tmpl_Template {
 	}
 
 	/**
-	 * Renders the template and fills its markers.
+	 * Renders template and fills its markers.
 	 *
-	 * @return	string the rendered html template with markers replaced with their content
+	 * @return	string	rendered html template with markers replaced with their content
 	 */
 	public function render($cleanTemplate = true) {
 
@@ -253,7 +262,7 @@ class tx_tmpl_Template {
 	}
 
 	/**
-	 * cleans the template from non-replaced markers and subparts
+	 * Cleans the template from non-replaced markers and subparts.
 	 *
 	 * @return void
 	 */
@@ -286,10 +295,10 @@ class tx_tmpl_Template {
 	}
 
 	/**
-	 * processes view helper, hands variables over if needed
+	 * Processes view helpers and hands variables over if needed.
 	 *
-	 * @param	string	the content to process by view helpers
-	 * @return	string	the view helper processed content
+	 * @param	string	content to process by view helpers
+	 * @return	string	view helper processed content
 	 * @author	Ingo Renner <ingo@typo3.org>
 	 */
 	protected function processViewHelpers($content) {
@@ -337,14 +346,16 @@ class tx_tmpl_Template {
 	}
 
 	/**
-	 * Helper function to determine of correct end was found, execute viewhelper and adjust content + positions
-	 * @param array $viewHelper ViewHelperArray with information about parsing
-	 * @param int &$viewHelperCurrent Current Position within ViewHelperArray
-	 * @param int &$parameterStart StartPosition for parameter parsing
-	 * @param int &$pos Current Position within content
-	 * @param string &$content Content working on
-	 * @param int &$contentLength length of content
-	 * @return none
+	 * Helper function to determine of correct end was found.
+	 * Executing viewhelper and adjusting content and positions if correct end
+	 * was found.
+	 *
+	 * @param	array	view helper array with information about parsing
+	 * @param	int	reference to current position within view helper array
+	 * @param	int	reference to current position within content
+	 * @param	string	reference to content working on
+	 * @param	int	reference to length of content
+	 * @return	void
 	 */
 	protected function executeViewHelper(&$viewHelper, &$viewHelperCurrent, &$pos, &$content, &$contentLength) {
 			//from dummy to current
@@ -383,9 +394,10 @@ class tx_tmpl_Template {
 	}
 
 	/**
-	 * parse view helper, all default markers, variables, loops and subparts should be processed
-	 * only ### from ViewHelpers should be within content.
-	 * Meaning of ### can only be determind by its following content
+	 * Parses content to replace view helper markers.
+	 * All default markers, variables, loops and subparts should be processed.
+	 * So only ### from ViewHelpers should be within content.
+	 * Meaning of ### can only be determind by its following content.
 	 *
 	 * @param	string	reference of content to process by viewhelpers
 	 * @author	Christoph Niewerth <christoph.niewerth@e-netconsulting.org>
@@ -468,7 +480,7 @@ class tx_tmpl_Template {
 	/**
 	 * Renders the loop for a given loop name.
 	 *
-	 * @param	string	Key from $this->loops to render
+	 * @param	string	key from $this->loops to render
 	 */
 	protected function renderLoop($loopName) {
 		$loopContent    = '';
@@ -513,15 +525,15 @@ class tx_tmpl_Template {
 	}
 
 	/**
-	 * processes marker in a loop that start with LOOP:, this is useful
+	 * Processes marker in a loop that start with LOOP:, this is useful
 	 * especially for calling view helper with the current iteration's value
-	 * as a parameter
+	 * as a parameter.
 	 *
-	 * @param unknown_type $content
-	 * @param unknown_type $loopName
-	 * @param array $markers
-	 * @param unknown_type $currentIterationValue
-	 * @return unknown
+	 * @param	string	content
+	 * @param	string	name of loop
+	 * @param	array	array of markers
+	 * @param	unknown_type	$currentIterationValue
+	 * @return	string	Content
 	 */
 	protected function processInLoopMarkers($content, $loopName, array $markers, $currentIterationValue) {
 
@@ -738,7 +750,7 @@ class tx_tmpl_Template {
 	}
 
 	/**
-	 * returns the markers found in the template
+	 * Returns markers found in template.
 	 *
 	 * @param	string	a prefix to limit the result to markers beginning with the specified prefix
 	 * @return	array	array of markers names

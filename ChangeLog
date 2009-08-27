@@ -3,6 +3,7 @@
 	* Fixed tx_tmpl_testcase to use correct template class
 	* Fixed bug #4336 (Correct code comments positions according to CGL)
 	* Fixed bug #4338 (Method delVariable renamed to deleteVariable)
+	* Corrected many phpDoc comments within tx_tmpl_Template, so bug #4340 should be fixed
 
 2009-08-21 Michael Knabe <mk@e-netconsulting.de>
 	* Fixed a wrong written variable name, that prevented variable substitution from working
