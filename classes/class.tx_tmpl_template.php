@@ -97,7 +97,7 @@ class tx_tmpl_Template {
 	 * @return	void
 	 */
 	public function setWorkingTemplateContent($templateContent) {
-		$this->workOnSubpart = $templateContent;
+		$this->template = $templateContent;
 	}
 
 	/**

@@ -1,3 +1,6 @@
+2009-09-04 Christoph Niewerth <christoph.niewerth@e-netconsulting.de>
+	* Fixed method setWorkingTemplateContent to set correct variable
+
 2009-08-27 Christoph Niewerth <christoph.niewerth@e-netconsulting.de>
 	* Fixed bug #4335 and changed class tx_tmpl to tx_tmpl_Template
 	* Fixed tx_tmpl_testcase to use correct template class
