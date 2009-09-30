@@ -444,6 +444,8 @@ class tx_tmpl_Template {
 						$rauteCount = 0;
 					}
 					break;
+				case chr(10):
+				case chr(13):
 				case ' ':
 				case '.':
 						// found possible end of Viewhelper
