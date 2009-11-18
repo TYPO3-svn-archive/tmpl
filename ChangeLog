@@ -1,3 +1,6 @@
+2009-11-18 Christoph Niewerth <christoph.niewerth@e-netconsulting.de>
+	* Changed parsing of viewhelpers to improve speed and reading of code
+
 2009-09-30 Christoph Niewerth <christoph.niewerth@e-netconsulting.de>
 	* Fixed bug #4819 (Additional check fo linebreaks)
 

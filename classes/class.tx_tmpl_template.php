@@ -345,53 +345,6 @@ class tx_tmpl_Template {
 		return $content;
 	}
 
-	/**
-	 * Helper function to determine of correct end was found.
-	 * Executing viewhelper and adjusting content and positions if correct end
-	 * was found.
-	 *
-	 * @param	array	view helper array with information about parsing
-	 * @param	int	reference to current position within view helper array
-	 * @param	int	reference to current position within content
-	 * @param	string	reference to content working on
-	 * @param	int	reference to length of content
-	 * @return	void
-	 */
-	protected function executeViewHelper(&$viewHelper, &$viewHelperCurrent, &$pos, &$content, &$contentLength) {
-			//from dummy to current
-		$viewHelperCurrent--;
-
-			// part before ### is 'text', parse ### again for functionality
-		if ( $viewHelper[$viewHelperCurrent]['name'] === '' ) {
-			$pos = $pos-4;
-			$viewHelperCurrent--;
-			debug($viewHelperCurrent);
-			//jump out of function
-			return;
-		}
-
-		$viewHelperName = strtolower($viewHelper[$viewHelperCurrent]['name']);
-
-		if (!isset($this->helpers[$viewHelperName])) {
-			if(!$this->loadViewHelper($viewHelperName)) {
-				return;
-			}
-			$this->addViewHelper($viewHelperName);
-		}
-
-		$viewHelperClass = $this->helpers[strtolower($viewHelperName)];
-		$parameter = substr($content, $viewHelper[$viewHelperCurrent]['parameterStart'], $viewHelper[$viewHelperCurrent]['end']-$viewHelper[$viewHelperCurrent]['parameterStart']-2);
-		$replacement = $viewHelperClass->execute(explode('|', $parameter));
-		$content = substr_replace($content, $replacement, $viewHelper[$viewHelperCurrent]['start'], $viewHelper[$viewHelperCurrent]['end'] - $viewHelper[$viewHelperCurrent]['start']+1);
-
-			//adjust positions and content length to parse added Text
-		$newContentLength = strlen($content);
-		$pos = $viewHelper[$viewHelperCurrent]['end'] - $contentLength + $newContentLength;
-		$contentLength = $newContentLength;
-
-			//from current to parent
-		$viewHelperCurrent--;
-	}
 
 	/**
 	 * Parses content to replace view helper markers.
@@ -404,78 +357,108 @@ class tx_tmpl_Template {
 	 */
 	public function parseViewHelpers(&$content) {
 		$contentLength = strlen($content);
-		$rauteCount = 0;
-		$rauteFound = true;
-		$viewHelper = array();
-		$parameterStart = 0;
+		$viewHelpers = array();
+		$currentViewHelper = 0;
+		$markerPositions = array();
 
-			// use viewHelperCurrent to determine if we are within viewHelper parsing
-			// viewHelperCurrent = 0 is equal to false for if-statements
-		$viewHelperCurrent = 0;
-
-			//begin parsing to get markers and find nested viewhelpers
-		$pos=0;
-		while($pos<$contentLength) {
-			switch(substr($content,$pos,1)) {
-				case '#':
-					$rauteCount++;
-						// found possible end of Viewhelper
-					if ($viewHelperCurrent && $rauteFound) {
-						$this->executeViewHelper($viewHelper, $viewHelperCurrent, $pos, $content, $contentLength);
-						$rauteFound = false;
-						// Found end or begin Viewhelper
-					} else if ($rauteCount == 3) {
-						// if end store position
-						$viewHelper[$viewHelperCurrent]['end'] = $pos;
-						$viewHelperCurrent++;
-							// if fist store position of first #
-						$viewHelper[$viewHelperCurrent] = array();
-						$viewHelper[$viewHelperCurrent]['start'] = $pos-2;
-						$rauteFound = true;
-						$rauteCount = 0;
-					}
-					break;
-				case ':':
-						// found viewhelper name
-					if ($viewHelperCurrent && $rauteFound) {
-						$viewHelper[$viewHelperCurrent]['name'] = substr($content,$viewHelper[$viewHelperCurrent]['start']+3, $pos-$viewHelper[$viewHelperCurrent]['start']-3);
-						$viewHelper[$viewHelperCurrent]['parameterStart'] = $pos + 1;
-						$rauteFound = false;
-						$rauteCount = 0;
-					}
-					break;
-				case chr(10):
-				case chr(13):
-				case ' ':
-				case '.':
-						// found possible end of Viewhelper
-					if ( $viewHelperCurrent && $rauteFound) {
-						$this->executeViewHelper($viewHelper, $viewHelperCurrent, $pos, $content, $contentLength);
-						$rauteFound = false;
-					}
-						//reset $rauteCount to detect ###
-					if($rauteCount != 0) {
-						$rauteCount = 0;
-						$rauteFound = false;
-					}
-					break;
-				default:
-						//reset $rauteCount to detect ###
-					if($rauteCount != 0) {
-						$rauteCount = 0;
-						$rauteFound = false;
-					}
-				break;
+			//get all positions of ###
+		$pos = 0;
+		while ($pos < $contentLength) {
+			$pos = strpos($content, '###', $pos);
+			if (is_int($pos)) {
+				$markerPositions[] = $pos;
+				$pos += 3;
+			} else {
+				$pos = $contentLength;
 			}
-			$pos++;
 		}
-			// handling of last ###
-		if ($viewHelperCurrent && $rauteFound) {
-				//adjust pos (pos++ at end of while)
-			$pos--;
 
-			$this->executeViewHelper($viewHelper, $viewHelperCurrent, $pos, $content, $contentLength);
-			$rauteFound = false;
+			//offset caused through replacement of content
+		$offset = 0;
+
+			//go throug ### positions and determine function of these
+		for ($key = 0; $key < count($markerPositions); $key++) {
+
+			$markerPos = $markerPositions[$key] + $offset;
+			$nameEnd = $this->findViewHelperName($content, $markerPos+3, $contentLength);
+
+				//found Viewhelper
+			if ($nameEnd) {
+				$currentViewHelper++;
+				//add markerPosition to array
+				$viewHelpers[$currentViewHelper] = array();
+				$viewHelpers[$currentViewHelper]['start'] = $markerPos;
+				$viewHelpers[$currentViewHelper]['name'] = substr($content, $markerPos+3, $nameEnd - $markerPos - 3);
+				$viewHelpers[$currentViewHelper]['parameterStart'] = $nameEnd + 1;
+			} else {
+					//found end viewhelper
+				if ($viewHelpers[$currentViewHelper]['name']) {
+					$viewHelperName = strtolower($viewHelpers[$currentViewHelper]['name']);
+
+						//load viewhelper
+					if (!isset($this->helpers[$viewHelperName])) {
+						if(!$this->loadViewHelper($viewHelperName)) {
+								//viewhelper does not exist
+							$currentViewHelper--;
+							continue;
+						}
+						$this->addViewHelper($viewHelperName);
+					}
+
+					$viewHelperClass = $this->helpers[$viewHelperName];
+
+						//execute viewhelper
+					$replacement = $viewHelperClass->execute(
+						explode('|', substr(
+							$content,
+							$viewHelpers[$currentViewHelper]['parameterStart'],
+							$markerPos - $viewHelpers[$currentViewHelper]['parameterStart']
+						))
+					);
+
+					$contentPartLength = $markerPos + 3 - $viewHelpers[$currentViewHelper]['start'];
+						//replace within content
+					$content = substr_replace(
+						$content,
+						$replacement,
+						$viewHelpers[$currentViewHelper]['start'],
+						$contentPartLength
+					);
+
+						//adjust contentLength and offset
+					$contentLength = strlen($content);
+					$offset += strlen($replacement) - $contentPartLength;
+				} else {
+					// abondoned marker
+				}
+				$currentViewHelper--;
+			}
+		}
+	}
+
+	/**
+	 * Helper function to determine if part after ### contains viewhelpername.
+	 *
+	 * @param	string	content to parse
+	 * @param	int	current position within content
+	 * @param	int	length of content
+	 * @return	false if no viewhelpername was found otherwithe endposition of viewhelpername
+	 */
+	protected function findViewHelperName(&$content, $pos, $contentLength) {
+		if (!is_int($pos)) {
+			return false;
+		}
+
+		while ($pos < $contentLength) {
+			$char = substr($content,$pos,1);
+			if ( $char == ':') {
+				return $pos;
+			} else if ( !('a' <= $char && $char <= 'z' ||
+						'A' <= $char && $char <= 'Z') ) {
+				return false;
+			} else {
+				$pos++;
+			}
 		}
 	}
 
