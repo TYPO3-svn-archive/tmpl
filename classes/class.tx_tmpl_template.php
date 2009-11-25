@@ -454,7 +454,9 @@ class tx_tmpl_Template {
 			if ( $char == ':') {
 				return $pos;
 			} else if ( !('a' <= $char && $char <= 'z' ||
-						'A' <= $char && $char <= 'Z') ) {
+						'A' <= $char && $char <= 'Z' ||
+						'0' <= $char && $char <= '9' ||
+						'_' == $char) ) {
 				return false;
 			} else {
 				$pos++;
